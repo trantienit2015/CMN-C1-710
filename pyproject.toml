@@ -1,0 +1,46 @@
+[project]
+name = "cmn-c1-710"
+version = "0.1.0"
+description = "GCPIAMPolicyAttachAgent — AgentCore Template"
+requires-python = ">=3.11"
+# The framework (agenticstar-agentcore) is NOT a public-PyPI dependency; CI
+# installs it from an internal package index. Pinning it here would make
+# `pip install -e .` fail because it is not resolvable from the default index.
+dependencies = [
+    "agenticstar-agentcore[marketplace,openai]==1.0.3",]
+
+[project.optional-dependencies]
+dev = [
+    "pytest==9.0.3",
+    "pytest-cov==5.0.0",
+    "pytest-asyncio==1.4.0",
+    "ruff==0.4.4",
+    "mypy==1.10.0",
+    "types-PyYAML==6.0.12.20260518",
+]
+
+[build-system]
+requires = ["setuptools==68.2.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+# stubs/ declares the fields of the framework's AgentState, so this template's State
+# is checked as a TypedDict, NotRequired fields included.
+mypy_path = "stubs"
+
+# framework and shared are imported for their base classes and contracts; this project
+# type-checks its own code, not theirs.
+[[tool.mypy.overrides]]
+module = ["framework", "framework.*", "shared.*"]
+ignore_missing_imports = true
+
+# Nodes, graphs and service clients here derive from framework base classes.
+[[tool.mypy.overrides]]
+module = ["src.*"]
+disallow_subclassing_any = false

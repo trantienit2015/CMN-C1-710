@@ -1,0 +1,19 @@
+# Runtime parameters — loaded separately from config/agent.yaml (the static
+# discovery manifest) and passed to the graph as Graph(config=...).
+max_retry: 3
+timeout_seconds: 30
+
+# チェックポインタを要する設定。マニフェストではなくこちらが正しい置き場で、
+# ここに置いて初めてグラフに届く（＝invoke をまたいで状態が永続化する）。
+memory_enabled: true
+hitl:
+  enabled: true
+  max_hitl: 8
+
+# The STG smoke check invokes this agent through the standalone entry point, which
+# carries a request string only — it has no channel for the structured
+# principal / role_id / resource_path triple, and no model client is configured
+# there to derive one from natural language. InputParseNode therefore returns its
+# fail-closed "could not resolve" result, which is the correct outcome for that
+# invocation rather than a defect: the node never guesses a binding.
+stg_expected_status: "error"

@@ -1,0 +1,32 @@
+# Agent Manifest — AgentRegistry entry point
+# AgentRegistry reads every key below at ROOT level. Nesting them under an
+# `agent:` block makes them invisible to the registry: namespace and enabled
+# fall back to defaults and name/version never resolve.
+id: "CMN-C1-710"
+name: "GCPIAMPolicyAttachAgent"
+namespace: "cmn"
+version: "0.1.0"
+enabled: true
+category: "Cat 1"
+industry: "CMN"
+
+# Base pattern reference (L1-direct inheritance; not an import target)
+base_type: "ToolCallingAgent"
+
+# Entry point — a single dotted import path (module.Class), not a module:/class:
+# split. AgentRegistry does class.rsplit(".", 1) to get (module, class_name).
+class: "src.graph.graph.Graph"
+
+# Security
+required_trust_level: "INTERNAL"
+
+# Compile-time gates. Both lists are declared explicitly.
+# secrets: 空で正しい。ctx.secrets.require() で鍵を解決する経路が無い。
+# 実際に要らない鍵を宣言するとコンパイル時に必須として扱われ起動できなくなる。
+# extras: 空で正しい。起動時にプロバイダのクライアントを構築していない。
+requires:
+  secrets: []
+  extras: []
+
+# Runtime parameters live in config/config.yaml. AgentRegistry loads that file
+# separately and passes its contents as Graph(config=...).
